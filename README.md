@@ -5,3 +5,4 @@ windows
 py -m venv venv
 .\venv\Scripts\Activate.ps1
 
+docker-compose up -d
