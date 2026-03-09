@@ -206,6 +206,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-#Project
+# Project
 data/
-airflow/logs/
+logs/
+cred.txt
