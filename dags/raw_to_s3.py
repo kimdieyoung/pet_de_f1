@@ -8,12 +8,12 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 
 # Конфигурация DAG
-OWNER = "i.korsakov"
-DAG_ID = "raw_from_api_to_s3"
+OWNER = "v.kim"
+DAG_ID = "raw_to_s3"
 
 # Используемые таблицы в DAG
 LAYER = "raw"
-SOURCE = "earthquake"
+SOURCE = "f1"
 
 # S3
 ACCESS_KEY = Variable.get("access_key")
@@ -27,7 +27,7 @@ SHORT_DESCRIPTION = "SHORT DESCRIPTION"
 
 args = {
     "owner": OWNER,
-    "start_date": pendulum.datetime(2025, 5, 1, tz="Europe/Moscow"),
+    "start_date": pendulum.datetime(2023, 1, 1, tz="Europe/Moscow"),
     "catchup": True,
     "retries": 3,
     "retry_delay": pendulum.duration(hours=1),
@@ -36,10 +36,10 @@ args = {
 
 def get_dates(**context) -> tuple[str, str]:
     """"""
-    start_date = context["data_interval_start"].format("YYYY-MM-DD")
-    end_date = context["data_interval_end"].format("YYYY-MM-DD")
+    year = context["data_interval_start"].format("YYYY")
 
-    return start_date, end_date
+
+    return year
 
 
 def get_and_transfer_api_data_to_s3(**context):
@@ -65,8 +65,8 @@ def get_and_transfer_api_data_to_s3(**context):
             SELECT
                 *
             FROM
-                read_csv_auto('https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={start_date}&endtime={end_date}') AS res
-        ) TO 's3://prod/{LAYER}/{SOURCE}/{start_date}/{start_date}_00-00-00.gz.parquet';
+                read_csv_auto('https://api.openf1.org/v1/sessions?year={year}&csv=true') AS res
+        ) TO 's3://prod/{LAYER}/{SOURCE}/{year}/.gz.parquet';
 
         """,
     )
