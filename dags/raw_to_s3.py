@@ -96,13 +96,13 @@ def get_and_transfer_api_data_to_s3(**context):
 
 with DAG(
     dag_id=DAG_ID,
-    schedule="59 23 * * 1,5,6,7",
+    schedule="59 23 * * *",
     default_args=args,
     tags=["s3", "raw"],
     description=SHORT_DESCRIPTION,
-    concurrency=1,
-    max_active_tasks=1,
-    max_active_runs=1,
+    concurrency=2,
+    max_active_tasks=2,
+    max_active_runs=2,
 ) as dag:
     dag.doc_md = LONG_DESCRIPTION
 
